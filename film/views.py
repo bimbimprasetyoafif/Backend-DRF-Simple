@@ -11,13 +11,13 @@ class FilmList(APIView):
     serializer_class = FilmSerializer
 
     def get_queryset(self):
-        produk = Film.objects.all()
-        return produk
+        temp = Film.objects.all()
+        return temp
 
     def get(self, request):
         data = self.get_queryset()
         serializer = self.serializer_class(data, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -35,8 +35,8 @@ class FilmDetail(APIView):
 
 
     def get_object(self, pk):
-        produk = Film.objects.get(pk=pk)
-        return produk  
+        temp = Film.objects.get(pk=pk)
+        return temp  
     
     def get(self, request, pk, format=None):
         try:
@@ -47,14 +47,14 @@ class FilmDetail(APIView):
             else:
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except:        
-            return Response(self.content, status=status.HTTP_404_NOT_FOUND)
+            return Response(self.content, status=status.HTTP_200_OK)
 
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
         serializer = self.serializer_class(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
@@ -77,13 +77,13 @@ class GambarList(APIView):
     serializer_class = GambarSerializer
 
     def get_queryset(self):
-        produk = Gambar.objects.all()
-        return produk
+        temp = Gambar.objects.all()
+        return temp
 
     def get(self, request):
         data = self.get_queryset()
         serializer = self.serializer_class(data, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GambarDetail(APIView):
     serializer_class = GambarSerializer
@@ -93,15 +93,15 @@ class GambarDetail(APIView):
 
 
     def get_object(self, pk):
-        produk = Gambar.objects.get(pk=pk)
-        return produk  
+        temp = Gambar.objects.get(pk=pk)
+        return temp  
     
     def get(self, request, pk, format=None):
         try:
             snippet = self.get_object(pk)
             serializer = self.serializer_class(snippet)
             if serializer == None:
-                return Response(self.content, status=status.HTTP_404_NOT_FOUND)
+                return Response(self.content, status=status=status.HTTP_200_OK)
             else:
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except:        
