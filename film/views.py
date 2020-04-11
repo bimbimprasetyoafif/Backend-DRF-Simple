@@ -101,7 +101,7 @@ class GambarDetail(APIView):
             snippet = self.get_object(pk)
             serializer = self.serializer_class(snippet)
             if serializer == None:
-                return Response(self.content, status=status=status.HTTP_200_OK)
+                return Response(self.content, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except:        
