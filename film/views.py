@@ -9,6 +9,7 @@ from .serializers import FilmSerializer, GambarSerializer, Film, Gambar
 
 class FilmList(APIView):
     serializer_class = FilmSerializer
+    content = {}
 
     def get_queryset(self):
         temp = Film.objects.all()
@@ -17,9 +18,11 @@ class FilmList(APIView):
     def get(self, request):
         data = self.get_queryset()
         serializer = self.serializer_class(data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        self.content["result"] = serializer.data
+        return Response(self.content, status=status.HTTP_200_OK)
     
     def post(self, request):
+        print(request.data)
         serializer = self.serializer_class(data=request.data)
         data = request.data
         if serializer.is_valid():
@@ -65,6 +68,7 @@ class FilmDetail(APIView):
 class FileUploadView(APIView):
     parser_class = (FileUploadParser,)
     def post(self, request, *args, **kwargs):
+        print(request.data)
         file_serializer = GambarSerializer(data=request.data)
     
         if file_serializer.is_valid():
@@ -75,6 +79,7 @@ class FileUploadView(APIView):
 
 class GambarList(APIView):
     serializer_class = GambarSerializer
+    content = {}
 
     def get_queryset(self):
         temp = Gambar.objects.all()
@@ -83,13 +88,12 @@ class GambarList(APIView):
     def get(self, request):
         data = self.get_queryset()
         serializer = self.serializer_class(data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        self.content["result"] = serializer.data
+        return Response(self.content, status=status.HTTP_200_OK)
 
 class GambarDetail(APIView):
     serializer_class = GambarSerializer
-    content = {
-                'status': 'Not Found'
-        }
+    content = {}
 
 
     def get_object(self, pk):
@@ -103,6 +107,12 @@ class GambarDetail(APIView):
             if serializer == None:
                 return Response(self.content, status=status.HTTP_200_OK)
             else:
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                self.content["result"] = serializer.data
+                return Response(self.content, status=status.HTTP_200_OK)
         except:        
             return Response(self.content, status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
